@@ -9,31 +9,31 @@ class UploadJsonToFirestore {
         console.log('Uploading')
         let content = this.fs.readFileSync(file, "utf8")
         let json = JSON.parse(content)
-        console.log(json)
-        let fireAdmin = this.FirebaseAdmin
-            .firestoreDB()
-
-
-        for (let i = 0; i < paths.length; i++) {
-            if (i == 0) {
-                fireAdmin = fireAdmin.collection(paths[i])
-            } else {
-                let parsePath = paths[i].split('.')
-                if (parsePath.length > 0
-                    && parsePath[parsePath.length - 1] === 'col') {
-                    fireAdmin = fireAdmin.collection(parsePath[0])
-                } else {
-                    fireAdmin = fireAdmin.doc(paths[i])
-                }
-            }
+        for (var key in json) {
+          if (json.hasOwnProperty(key)) {
+            json[key].forEach((item) => {
+              console.log(item)
+            })
+          }
         }
 
-        fireAdmin.set(json)
-            .then(() => {
-                console.log('Uploaded')
-            }).catch(error => {
-                console.log(error)
+        for (var key in json) {
+          if (json.hasOwnProperty(key)) {
+            json[key].forEach((item) => {
+              console.log(item)
+              let fireAdmin = this.FirebaseAdmin
+                .firestoreDB()
+              fireAdmin = fireAdmin.collection(paths[0])
+              fireAdmin = fireAdmin.doc()
+              fireAdmin.set(item)
+                .then(() => {
+                    console.log('Uploaded')
+                }).catch(error => {
+                    console.log(error)
+                })
             })
+          }
+        }
     }
 }
 
